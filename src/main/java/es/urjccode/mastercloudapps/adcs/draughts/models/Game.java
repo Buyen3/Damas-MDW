@@ -81,7 +81,10 @@ public class Game {
 			removedCoordinates.add(0, forRemoving);
 			this.board.remove(forRemoving);
 		}else{
-            this.randomRemove(pair,coordinates);
+            Coordinate betweenDiagonalPiece = this.getBetweenDiagonalPiece(coordinates[pair]);
+            if(betweenDiagonalPiece != null){
+                this.randomRemove(pair,coordinates);
+            }
         }
 		this.board.move(coordinates[pair], coordinates[pair + 1]);
 		if (this.board.getPiece(coordinates[pair + 1]).isLimit(coordinates[pair + 1])) {
@@ -92,17 +95,19 @@ public class Game {
 	}
 
     private void randomRemove(int pair,Coordinate... coordinates){
-        Coordinate remove;
-        Piece piece;
-        boolean b;
+
+        Piece piece = null;
+        boolean b = false;
         do {
-            remove = new Coordinate(this.getRandom(7),this.getRandom(7));
-            piece = this.getPiece(remove);
+            this.setRemove(new Coordinate(this.getRandom(7),this.getRandom(7)));
+            piece = this.getPiece(getRemove());
 
-            b = remove != coordinates[pair] && piece != null && this.turn.getOppositeColor() != this.board.getColor(remove);
-
-            if (b) {
-                this.board.remove(remove);
+            if (piece != null && this.turn.getOppositeColor() != this.board.getColor(getRemove())) {
+                if(getRemove().getRow() != coordinates[pair].getRow() && getRemove().getColumn() != coordinates[pair].getColumn()){
+                    b = true;
+                    System.out.println(getRemove());
+                    this.board.remove(getRemove());
+                }
             }
         } while (!b);
     }
@@ -125,6 +130,51 @@ public class Game {
 		}
 		return null;
 	}
+
+    private Coordinate getBetweenDiagonalPiece(Coordinate coordinate,Coordinate tpCoordinate) {
+
+        if(this.getPiece(tpCoordinate) != null){
+            return null;
+        }
+        List<Coordinate> betweenCoordinates = coordinate.getBetweenDiagonalCoordinates(tpCoordinate);
+        if (betweenCoordinates.isEmpty())
+            return null;
+        for (Coordinate c : betweenCoordinates) {
+            if (this.getPiece(c) != null)
+                return c;
+        }
+        return null;
+    }
+
+    private Coordinate getBetweenDiagonalPiece(Coordinate coordinate) {
+        Coordinate tpCoordinate = null;
+
+        if(coordinate.getRow() >= 2 && coordinate.getRow() <= 5){
+            Color color = this.board.getColor(coordinate);
+            color.toString();
+            int toRow = 2;
+            if("WHITE".equals(color.toString())){
+                toRow = -2;
+            }
+
+            if(coordinate.getColumn() >= 2){
+                tpCoordinate = new Coordinate(coordinate.getRow()+toRow,coordinate.getColumn()-2);
+                Coordinate betweenDiagonalPiece = getBetweenDiagonalPiece(coordinate, tpCoordinate);
+                if(betweenDiagonalPiece != null && this.board.getColor(betweenDiagonalPiece) != color){
+                    return betweenDiagonalPiece;
+                }
+            }
+
+            if(coordinate.getColumn() <= 5) {
+                tpCoordinate = new Coordinate(coordinate.getRow() + toRow, coordinate.getColumn() + 2);
+                Coordinate betweenDiagonalPiece = getBetweenDiagonalPiece(coordinate, tpCoordinate);
+                if(betweenDiagonalPiece != null && this.board.getColor(betweenDiagonalPiece) != color){
+                    return betweenDiagonalPiece;
+                }
+            }
+        }
+        return null;
+    }
 
 	private Error isCorrectGlobalMove(Error error, List<Coordinate> removedCoordinates, Coordinate... coordinates){
 		if (error != null)
