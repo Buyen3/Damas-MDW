@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class InitialGameTest extends GameTest {
-   
+
     @Test
     public void testGivenGameWhenIsNewThenPrefixedLocations() {
         this.game = new Game();
@@ -55,5 +55,5 @@ public class InitialGameTest extends GameTest {
             "b b b b ");
         assertEquals(this.expectedGame, this.game);
     }
-    
+
 }

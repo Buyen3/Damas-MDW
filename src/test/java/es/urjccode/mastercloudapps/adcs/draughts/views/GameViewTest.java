@@ -39,7 +39,7 @@ public class GameViewTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void testGivenGameViewWhenInteractThenOk(){
         Game game = new GameBuilder().build();
@@ -73,11 +73,11 @@ public class GameViewTest {
             "        ").build();
         game.move(
           new Coordinate(1, 0),
-          new Coordinate(0, 1)  
+          new Coordinate(0, 1)
         );
         game.move(
           new Coordinate(6, 1),
-          new Coordinate(7, 0)  
+          new Coordinate(7, 0)
         );
         StartController startController = new StartController(game, new State());
         this.gameView.write(startController);
@@ -94,6 +94,52 @@ public class GameViewTest {
         "8N       ",
         " 12345678");
         assertEquals(marshall(rows), marshall(argument.getAllValues()));
+    }
+
+    @Test
+    public void testGivenGameViewWhenInteractWithRemoveDraughtThenOk(){
+        Game game = new GameBuilder().rows(
+            " n n n n",
+            "n n n n ",
+            "     n n",
+            "  n n   ",
+            " b b    ",
+            "    b b ",
+            " b b b b",
+            "b b b b ").build();
+        game.move(
+            new Coordinate(4, 1),
+            new Coordinate(3, 0)
+        );
+        Coordinate remove = game.getRemove();
+        game.move(
+            new Coordinate(3, 4),
+            new Coordinate(4, 5)
+        );
+        Coordinate remove2 = game.getRemove();
+        StartController startController = new StartController(game, new State());
+        this.gameView.write(startController);
+        verify(console, times(90)).write(argument.capture());
+        List<String> rows = Arrays.asList(
+            " 12345678",
+            "1 n n n n",
+            "2n n n n ",
+            "3     n n",
+            "4b n     ",
+            "5   b n  ",
+            "6    b b ",
+            "7 b b b b",
+            "8b b b b ",
+            " 12345678");
+        StringBuffer s = new StringBuffer(rows.get(remove.getRow()+1));
+        s.replace(remove.getColumn()+1,remove.getColumn()+2," ");
+        rows.set(remove.getRow()+1,s.toString());
+
+        StringBuffer s2 = new StringBuffer(rows.get(remove2.getRow()+1));
+        s2.replace(remove2.getColumn()+1,remove2.getColumn()+2," ");
+        rows.set(remove2.getRow()+1,s2.toString());
+        assertEquals(marshall(rows), marshall(argument.getAllValues()));
+
     }
 
     private static String marshall(List<String> strings){
