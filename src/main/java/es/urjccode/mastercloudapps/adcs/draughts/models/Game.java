@@ -270,10 +270,7 @@ public class Game {
 		} else if (!board.equals(other.board))
 			return false;
 		if (turn == null) {
-			if (other.turn != null)
-				return false;
-		} else if (!turn.equals(other.turn))
-			return false;
-		return true;
-	}
+            return other.turn == null;
+		} else return turn.equals(other.turn);
+    }
 }
