@@ -2,11 +2,21 @@ package es.urjccode.mastercloudapps.adcs.draughts.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
 
 	private Board board;
 	private Turn turn;
+    private Coordinate remove;
+
+    public Coordinate getRemove() {
+        return remove;
+    }
+
+    public void setRemove(Coordinate remove) {
+        this.remove = remove;
+    }
 
 	Game(Board board) {
 		this.turn = new Turn();
@@ -70,7 +80,9 @@ public class Game {
 		if (forRemoving != null) {
 			removedCoordinates.add(0, forRemoving);
 			this.board.remove(forRemoving);
-		}
+		}else{
+            this.randomRemove(pair,coordinates);
+        }
 		this.board.move(coordinates[pair], coordinates[pair + 1]);
 		if (this.board.getPiece(coordinates[pair + 1]).isLimit(coordinates[pair + 1])) {
 			Color color = this.board.getColor(coordinates[pair + 1]);
@@ -78,6 +90,29 @@ public class Game {
 			this.board.put(coordinates[pair + 1], new Draught(color));
 		}
 	}
+
+    private void randomRemove(int pair,Coordinate... coordinates){
+        Coordinate remove;
+        Piece piece;
+        boolean b;
+        do {
+            remove = new Coordinate(this.getRandom(7),this.getRandom(7));
+            piece = this.getPiece(remove);
+
+            b = remove != coordinates[pair] && piece != null && this.turn.getOppositeColor() != this.board.getColor(remove);
+
+            if (b) {
+                this.board.remove(remove);
+            }
+        } while (!b);
+    }
+
+    private int getRandom(int n){
+        // 0<= random and random < n
+        Random ran = new Random();
+        int random = ran.nextInt(n);
+        return random;
+    }
 
 	private Coordinate getBetweenDiagonalPiece(int pair, Coordinate... coordinates) {
 		assert coordinates[pair].isOnDiagonal(coordinates[pair + 1]);

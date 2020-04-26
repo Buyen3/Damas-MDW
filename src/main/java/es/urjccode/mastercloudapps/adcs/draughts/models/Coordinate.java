@@ -102,11 +102,11 @@ public class Coordinate {
         return this.row == Coordinate.LOWER_LIMIT;
     }
 
-    int getRow() {
+    public int getRow() {
         return this.row;
     }
 
-    int getColumn() {
+    public int getColumn() {
         return this.column;
     }
 
