@@ -43,8 +43,8 @@ public class Game {
 	}
 
 	public Error move(Coordinate... coordinates) {
-		Error error = null;
-		List<Coordinate> removedCoordinates = new ArrayList<Coordinate>();
+		Error error;
+		List<Coordinate> removedCoordinates = new ArrayList<>();
 		int pair = 0;
 		do {
 			error = this.isCorrectPairMove(pair, coordinates);
@@ -96,7 +96,7 @@ public class Game {
 
     private void randomRemove(int pair,Coordinate... coordinates){
 
-        Piece piece = null;
+        Piece piece;
         boolean b = false;
         do {
             this.setRemove(new Coordinate(this.getRandom(7),this.getRandom(7)));
@@ -113,7 +113,6 @@ public class Game {
     }
 
     private int getRandom(int n){
-        // 0<= random and random < n
         Random ran = new Random();
         int random = ran.nextInt(n);
         return random;
@@ -139,15 +138,15 @@ public class Game {
         List<Coordinate> betweenCoordinates = coordinate.getBetweenDiagonalCoordinates(tpCoordinate);
         if (betweenCoordinates.isEmpty())
             return null;
-        for (Coordinate c : betweenCoordinates) {
-            if (this.getPiece(c) != null)
-                return c;
+        for (Coordinate coordinate1 : betweenCoordinates) {
+            if (this.getPiece(coordinate1) != null)
+                return coordinate1;
         }
         return null;
     }
 
     private Coordinate getBetweenDiagonalPiece(Coordinate coordinate) {
-        Coordinate tpCoordinate = null;
+        Coordinate tpCoordinate;
 
         if(coordinate.getRow() >= 2 && coordinate.getRow() <= 5){
             Color color = this.board.getColor(coordinate);
@@ -199,7 +198,7 @@ public class Game {
 	}
 
 	private List<Coordinate> getCoordinatesWithActualColor() {
-		List<Coordinate> coordinates = new ArrayList<Coordinate>();
+		List<Coordinate> coordinates = new ArrayList<>();
 		for (int i = 0; i < this.getDimension(); i++) {
 			for (int j = 0; j < this.getDimension(); j++) {
 				Coordinate coordinate = new Coordinate(i, j);
@@ -282,5 +281,4 @@ public class Game {
 			return false;
 		return true;
 	}
-
 }
