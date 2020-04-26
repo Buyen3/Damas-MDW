@@ -61,42 +61,6 @@ public class GameViewTest {
     }
 
     @Test
-    public void testGivenGameViewWhenInteractWithDraughtThenOk(){
-        Game game = new GameBuilder().rows(
-            "        ",
-            "b       ",
-            "        ",
-            "        ",
-            "        ",
-            "        ",
-            " n      ",
-            "        ").build();
-        game.move(
-          new Coordinate(1, 0),
-          new Coordinate(0, 1)
-        );
-        game.move(
-          new Coordinate(6, 1),
-          new Coordinate(7, 0)
-        );
-        StartController startController = new StartController(game, new State());
-        this.gameView.write(startController);
-        verify(console, times(90)).write(argument.capture());
-        List<String> rows = Arrays.asList(
-        " 12345678",
-        "1 B      ",
-        "2        ",
-        "3        ",
-        "4        ",
-        "5        ",
-        "6        ",
-        "7        ",
-        "8N       ",
-        " 12345678");
-        assertEquals(marshall(rows), marshall(argument.getAllValues()));
-    }
-
-    @Test
     public void testGivenGameViewWhenInteractWithRemoveDraughtThenOk(){
         Game game = new GameBuilder().rows(
             " n n n n",
@@ -140,6 +104,44 @@ public class GameViewTest {
         rows.set(remove2.getRow()+1,s2.toString());
         assertEquals(marshall(rows), marshall(argument.getAllValues()));
 
+    }
+
+    @Test
+    public void testGivenGameViewWhenInteractWithDraughtThenOk(){
+        Game game = new GameBuilder().rows(
+            "   n n n",
+            "b n n n ",
+            "   n n  ",
+            "        ",
+            "        ",
+            "  b b   ",
+            " b b b n",
+            "b b b   ").build();
+        game.move(
+            new Coordinate(1, 0),
+            new Coordinate(0, 1)
+        );
+        Coordinate remove = game.getRemove();
+        game.move(
+            new Coordinate(6, 7),
+            new Coordinate(7, 6)
+        );
+        Coordinate remove2 = game.getRemove();
+        StartController startController = new StartController(game, new State());
+        this.gameView.write(startController);
+        verify(console, times(90)).write(argument.capture());
+        List<String> rows = Arrays.asList(
+            " 12345678",
+            "1 b n n n",
+            "2  n n n ",
+            "3   n n  ",
+            "4        ",
+            "5        ",
+            "6  b b   ",
+            "7 b b b  ",
+            "8b b b n ",
+            " 12345678");
+        assertEquals(marshall(rows), marshall(argument.getAllValues()));
     }
 
     private static String marshall(List<String> strings){
